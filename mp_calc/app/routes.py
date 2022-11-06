@@ -34,19 +34,25 @@ def questions():
 	if form.validate_on_submit():
 		question = Question(expression=form.expression.data)
 		evalans = EvaluateExpression(form.expression.data)
-		question.answer = evalans.evaluate()
-		question.author = current_user.id 
-		challenge = Challenge(question=question)
-		username_to = []
-		for name in form.assign_to.data:
-			username_to.append(User.query.filter_by(username=name).first())
+		
+		try:
+			question.answer = evalans.evaluate()
+			question.author = current_user.id 
+			challenge = Challenge(question=question)
+			username_to = []
+			for name in form.assign_to.data:
+				username_to.append(User.query.filter_by(username=name).first())
 
-		challenge.to_user = username_to
-		db.session.add(question)
-		db.session.add(challenge)
-		db.session.commit()
-		flash('Congratulations, you have created a new question.')
-		questions = current_user.questions.all()
+			challenge.to_user = username_to
+			db.session.add(question)
+			db.session.add(challenge)
+			db.session.commit()
+			flash('Congratulations, you have created a new question.')
+			questions = current_user.questions.all()
+
+		except:
+			flash("Invalid Math Expression")
+
 		return render_template('questions.html', title='Questions', 
 							user=current_user,
 							questions=questions,
