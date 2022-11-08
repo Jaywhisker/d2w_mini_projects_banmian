@@ -35,6 +35,7 @@ def questions():
 		question = Question(expression=form.expression.data)
 		evalans = EvaluateExpression(form.expression.data)
 		
+		# account for invalid math equations. raise an error for an invalid equation.
 		try:
 			question.answer = evalans.evaluate()
 			question.author = current_user.id 
