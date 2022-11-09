@@ -33,10 +33,8 @@ def questions():
 	form.assign_to.choices=userlist
 	if form.validate_on_submit():
 		question = Question(expression=form.expression.data)
-		evalans = EvaluateExpression(form.expression.data)
-		
-		# account for invalid math equations. raise an error for an invalid equation.
 		try:
+			evalans = EvaluateExpression(form.expression.data)
 			question.answer = evalans.evaluate()
 			question.author = current_user.id 
 			challenge = Challenge(question=question)
@@ -50,14 +48,14 @@ def questions():
 			db.session.commit()
 			flash('Congratulations, you have created a new question.')
 			questions = current_user.questions.all()
-
+			return render_template('questions.html', title='Questions', 
+								user=current_user,
+								questions=questions,
+								form=form)
 		except:
-			flash("Invalid Math Expression")
+			flash("Invalid math expression")
+			
 
-		return render_template('questions.html', title='Questions', 
-							user=current_user,
-							questions=questions,
-							form=form)
 	return render_template('questions.html', title='Questions', 
 							user=current_user,
 							questions=questions,
